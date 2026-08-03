@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>アクセス数レポート | 日本橋Art.jp</title>
+<style>
+  :root {
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+    background: #f5f3ef;
+    color: #2b2620;
+    padding: 24px 16px 60px;
+  }
+  .card {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    padding: 28px 24px;
+  }
+  h1 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    color: #6b4f2b;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: #8a8378;
+    margin: 0 0 24px;
+    word-break: break-all;
+  }
+  .metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 14px 0;
+    border-bottom: 1px solid #eee7dc;
+  }
+  .metric:last-of-type {
+    border-bottom: none;
+  }
+  .metric-label {
+    font-size: 14px;
+    color: #6b6459;
+  }
+  .metric-value {
+    font-size: 22px;
+    font-weight: 600;
+    color: #2b2620;
+  }
+  .metric-value .unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: #8a8378;
+    margin-left: 2px;
+  }
+  .updated {
+    margin-top: 20px;
+    font-size: 12px;
+    color: #a39c8f;
+    text-align: right;
+  }
+  .error {
+    color: #a33;
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }
+  .loading {
+    color: #8a8378;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>あなたの作家ページ アクセス数</h1>
+    <p class="subtitle" id="page-path">読み込み中...</p>
+    <div id="content">
+      <p class="loading">データを取得しています…</p>
+    </div>
+    <p class="updated" id="updated-line"></p>
+  </div>
+
+<script>
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('t');
+  const contentEl = document.getElementById('content');
+  const pathEl = document.getElementById('page-path');
+  const updatedEl = document.getElementById('updated-line');
+
+  function showError(message) {
+    pathEl.textContent = '';
+    contentEl.innerHTML = '<p class="error">' + message + '</p>';
+  }
+
+  if (!token) {
+    showError('専用URLが正しくありません。\nURLの末尾に「?t=トークン」が付いているか確認してください。');
+    return;
+  }
+
+  const jsonUrl = './' + encodeURIComponent(token) + '.json';
+
+  fetch(jsonUrl, { cache: 'no-store' })
+    .then(function (res) {
+      if (!res.ok) {
+        throw new Error('データが見つかりませんでした（' + res.status + '）。');
+      }
+      return res.text();
+    })
+    .then(function (text) {
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        throw new Error('データの形式が正しくありません。');
+      }
+      render(data);
+    })
+    .catch(function (err) {
+      showError('データの読み込みに失敗しました。\n時間をおいて再度お試しいただくか、事務局までご連絡ください。\n(' + err.message + ')');
+    });
+
+  function render(data) {
+    pathEl.textContent = data.page + '（過去' + data.period_days + '日間）';
+
+    const rows = [
+      ['ページビュー', data.pageviews, '回'],
+      ['ユーザー数', data.users, '人'],
+      ['セッション数', data.sessions, '回'],
+      ['平均滞在時間', formatDuration(data.avg_duration_sec), ''],
+      ['エンゲージメント率', (data.engagement_rate * 100).toFixed(1), '%'],
+    ];
+
+    let html = '';
+    rows.forEach(function (r) {
+      const label = r[0];
+      const value = r[1];
+      const unit = r[2];
+      html += '<div class="metric">'
+        + '<span class="metric-label">' + label + '</span>'
+        + '<span class="metric-value">' + value + '<span class="unit">' + unit + '</span></span>'
+        + '</div>';
+    });
+    contentEl.innerHTML = html;
+
+    updatedEl.textContent = '更新日: ' + data.updated;
+  }
+
+  function formatDuration(totalSeconds) {
+    const s = Math.round(totalSeconds);
+    const m = Math.floor(s / 60);
+    const rem = s % 60;
+    if (m > 0) {
+      return m + '分' + rem + '秒';
+    }
+    return s + '秒';
+  }
+})();
+</script>
+</body>
+</html>
