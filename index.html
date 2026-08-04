@@ -6,9 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <title>アクセス数レポート | 日本橋Art.jp</title>
 <style>
-  :root {
-    color-scheme: light;
-  }
+  :root { color-scheme: light; }
   * { box-sizing: border-box; }
   body {
     margin: 0;
@@ -18,149 +16,127 @@
     padding: 24px 16px 60px;
   }
   .card {
-    max-width: 480px;
+    max-width: 560px;
     margin: 0 auto;
-    background: #ffffff;
+    background: #fff;
     border-radius: 12px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    padding: 28px 24px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    padding: 26px 22px;
   }
-  h1 {
-    font-size: 18px;
-    margin: 0 0 4px;
-    color: #6b4f2b;
-  }
-  .subtitle {
-    font-size: 13px;
-    color: #8a8378;
-    margin: 0 0 24px;
-    word-break: break-all;
-  }
-  .metric {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 14px 0;
-    border-bottom: 1px solid #eee7dc;
-  }
-  .metric:last-of-type {
-    border-bottom: none;
-  }
-  .metric-label {
-    font-size: 14px;
+  h1 { font-size: 18px; margin: 0 0 4px; color: #6b4f2b; }
+  .subtitle { font-size: 13px; color: #8a8378; margin: 0 0 20px; word-break: break-all; }
+
+  /* --- 期間選択 --- */
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .preset {
+    flex: 1 1 auto;
+    padding: 7px 4px;
+    font-size: 12.5px;
+    font-family: inherit;
+    border: 1px solid #ddd4c4;
+    background: #fff;
     color: #6b6459;
-  }
-  .metric-value {
-    font-size: 22px;
-    font-weight: 600;
-    color: #2b2620;
-  }
-  .metric-value .unit {
-    font-size: 13px;
-    font-weight: 400;
-    color: #8a8378;
-    margin-left: 2px;
-  }
-  .updated {
-    margin-top: 20px;
-    font-size: 12px;
-    color: #a39c8f;
-    text-align: right;
-  }
-  .section {
-    margin-top: 30px;
-    padding-top: 22px;
-    border-top: 1px solid #eee7dc;
-  }
-  .section-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #6b4f2b;
-    margin: 0 0 14px;
-  }
-  .vchart {
-    display: flex;
-    align-items: flex-end;
-    gap: 2px;
-    height: 110px;
-  }
-  .vbar-wrap {
-    flex: 1 1 0;
-    height: 100%;
-    display: flex;
-    align-items: flex-end;
-    min-width: 0;
-  }
-  .vbar {
-    width: 100%;
-    background: #b08d57;
-    border-radius: 2px 2px 0 0;
-  }
-  .vbar.alt { background: #8fa889; }
-  .axis {
-    display: flex;
-    justify-content: space-between;
-    font-size: 11px;
-    color: #a39c8f;
-    margin-top: 6px;
-  }
-  .src-row { margin-bottom: 12px; }
-  .src-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    font-size: 13px;
-    color: #4a443c;
-    margin-bottom: 4px;
-    gap: 10px;
-  }
-  .src-head > span:first-child {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    border-radius: 6px;
+    cursor: pointer;
     white-space: nowrap;
   }
-  .src-val { color: #8a8378; font-size: 12px; flex: none; }
-  .hbar-bg {
-    background: #f0ebe2;
-    border-radius: 3px;
-    height: 8px;
-    overflow: hidden;
+  .preset:hover { background: #faf7f1; }
+  .preset.active { background: #6b4f2b; border-color: #6b4f2b; color: #fff; font-weight: 600; }
+  .range { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .range label { font-size: 11px; color: #8a8378; display: block; margin-bottom: 3px; }
+  .range .field { flex: 1 1 130px; min-width: 130px; }
+  .range input[type="date"] {
+    width: 100%;
+    padding: 7px 8px;
+    font-size: 14px;
+    font-family: inherit;
+    color: #2b2620;
+    border: 1px solid #ddd4c4;
+    border-radius: 6px;
+    background: #fff;
   }
+  .range .dash { color: #a39c8f; padding-top: 16px; }
+  .range-note { font-size: 11px; color: #a39c8f; margin: 8px 0 0; }
+  .range-warn { font-size: 12px; color: #a33; margin: 8px 0 0; }
+
+  /* --- 指標 --- */
+  .metrics { margin-top: 22px; }
+  .metric {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 13px 0; border-bottom: 1px solid #eee7dc;
+  }
+  .metric:last-of-type { border-bottom: none; }
+  .metric-label { font-size: 14px; color: #6b6459; }
+  .metric-value { font-size: 22px; font-weight: 600; }
+  .metric-value .unit { font-size: 13px; font-weight: 400; color: #8a8378; margin-left: 2px; }
+
+  /* --- グラフ --- */
+  .section { margin-top: 28px; padding-top: 20px; border-top: 1px solid #eee7dc; }
+  .section-title { font-size: 14px; font-weight: 600; color: #6b4f2b; margin: 0 0 12px; }
+  /* 90日表示では棒が細くなるため、間隔は1pxに詰めている */
+  .vchart { display: flex; align-items: flex-end; gap: 1px; height: 110px; }
+  .vbar-wrap { flex: 1 1 0; height: 100%; display: flex; align-items: flex-end; min-width: 0; }
+  .vbar { width: 100%; background: #b08d57; border-radius: 2px 2px 0 0; }
+  .vbar.alt { background: #8fa889; }
+  .axis { display: flex; justify-content: space-between; font-size: 11px; color: #a39c8f; margin-top: 6px; }
+  .src-row { margin-bottom: 11px; }
+  .src-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 13px; color: #4a443c; margin-bottom: 4px; gap: 10px;
+  }
+  .src-head > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .src-val { color: #8a8378; font-size: 12px; flex: none; }
+  .hbar-bg { background: #f0ebe2; border-radius: 3px; height: 8px; overflow: hidden; }
   .hbar { background: #b08d57; height: 100%; border-radius: 3px; }
   .empty { font-size: 13px; color: #a39c8f; margin: 0; }
-  .error {
-    color: #a33;
-    font-size: 14px;
-    line-height: 1.6;
-    white-space: pre-wrap;
-  }
-  .loading {
-    color: #8a8378;
-    font-size: 14px;
-  }
+  .updated { margin-top: 20px; font-size: 12px; color: #a39c8f; text-align: right; }
+  .error { color: #a33; font-size: 14px; line-height: 1.6; white-space: pre-wrap; }
+  .loading { color: #8a8378; font-size: 14px; }
 </style>
 </head>
 <body>
   <div class="card">
     <h1>あなたの作家ページ アクセス数</h1>
     <p class="subtitle" id="page-path">読み込み中...</p>
-    <div id="content">
-      <p class="loading">データを取得しています…</p>
+    <div id="controls" style="display:none">
+      <div class="presets" id="presets"></div>
+      <div class="range">
+        <div class="field">
+          <label for="start">開始日</label>
+          <input type="date" id="start">
+        </div>
+        <span class="dash">–</span>
+        <div class="field">
+          <label for="end">終了日</label>
+          <input type="date" id="end">
+        </div>
+      </div>
+      <p class="range-note" id="range-note"></p>
     </div>
+    <div id="content"><p class="loading">データを取得しています…</p></div>
     <p class="updated" id="updated-line"></p>
   </div>
 
 <script>
 (function () {
-  const params = new URLSearchParams(window.location.search);
-  const token = params.get('t');
-  const contentEl = document.getElementById('content');
-  const pathEl = document.getElementById('page-path');
-  const updatedEl = document.getElementById('updated-line');
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('t');
+  var contentEl = document.getElementById('content');
+  var pathEl = document.getElementById('page-path');
+  var updatedEl = document.getElementById('updated-line');
+  var controlsEl = document.getElementById('controls');
+  var presetsEl = document.getElementById('presets');
+  var startEl = document.getElementById('start');
+  var endEl = document.getElementById('end');
+  var noteEl = document.getElementById('range-note');
 
-  function showError(message) {
+  var DATA = null;
+  var PRESETS = [7, 28, 90];
+
+  function showError(msg) {
     pathEl.textContent = '';
-    contentEl.innerHTML = '<p class="error">' + message + '</p>';
+    controlsEl.style.display = 'none';
+    contentEl.innerHTML = '<p class="error">' + msg + '</p>';
   }
 
   if (!token) {
@@ -168,103 +144,185 @@
     return;
   }
 
-  const jsonUrl = './' + encodeURIComponent(token) + '.json';
-
-  fetch(jsonUrl, { cache: 'no-store' })
+  fetch('./' + encodeURIComponent(token) + '.json', { cache: 'no-store' })
     .then(function (res) {
-      if (!res.ok) {
-        throw new Error('データが見つかりませんでした（' + res.status + '）。');
-      }
+      if (!res.ok) { throw new Error('データが見つかりませんでした（' + res.status + '）。'); }
       return res.text();
     })
     .then(function (text) {
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        throw new Error('データの形式が正しくありません。');
-      }
-      render(data);
+      try { DATA = JSON.parse(text); }
+      catch (e) { throw new Error('データの形式が正しくありません。'); }
+      init();
     })
     .catch(function (err) {
       showError('データの読み込みに失敗しました。\n時間をおいて再度お試しいただくか、事務局までご連絡ください。\n(' + err.message + ')');
     });
 
-  function render(data) {
-    pathEl.textContent = data.page + '（過去' + data.period_days + '日間）';
+  /* ---------- 日付ユーティリティ（ローカル時刻でずれないよう文字列で扱う） ---------- */
+  function ymd(dateStr) { return dateStr.replace(/-/g, ''); }
+  function toDate(s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); }
+  function fmt(d) {
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+  function addDays(s, n) { var d = toDate(s); d.setDate(d.getDate() + n); return fmt(d); }
+  function dayCount(a, b) { return Math.round((toDate(b) - toDate(a)) / 86400000) + 1; }
+  function mmdd(s) { return s.slice(5).replace('-', '/'); }
 
-    const rows = [
-      ['ページビュー', data.pageviews, '回'],
-      ['ユーザー数', data.users, '人'],
-      ['セッション数', data.sessions, '回'],
-      ['平均エンゲージメント時間', formatDuration(data.avg_duration_sec), ''],
-      ['エンゲージメント率', (data.engagement_rate * 100).toFixed(1), '%'],
-    ];
+  function init() {
+    pathEl.textContent = DATA.page;
+    controlsEl.style.display = '';
 
-    let html = '';
-    rows.forEach(function (r) {
-      const label = r[0];
-      const value = r[1];
-      const unit = r[2];
-      html += '<div class="metric">'
-        + '<span class="metric-label">' + label + '</span>'
-        + '<span class="metric-value">' + value + '<span class="unit">' + unit + '</span></span>'
-        + '</div>';
+    startEl.min = DATA.start; startEl.max = DATA.end;
+    endEl.min = DATA.start;   endEl.max = DATA.end;
+
+    var def = DATA.default_days || 28;
+    endEl.value = DATA.end;
+    startEl.value = maxDate(DATA.start, addDays(DATA.end, -(def - 1)));
+
+    PRESETS.forEach(function (n) {
+      if (n > (DATA.window_days || 90)) { return; }
+      var b = document.createElement('button');
+      b.className = 'preset';
+      b.textContent = '過去' + n + '日';
+      b.dataset.days = n;
+      b.addEventListener('click', function () {
+        endEl.value = DATA.end;
+        startEl.value = maxDate(DATA.start, addDays(DATA.end, -(n - 1)));
+        update();
+      });
+      presetsEl.appendChild(b);
     });
 
-    html += renderDaily(data.daily);
-    html += renderHourly(data.hourly);
-    html += renderSources(data.sources);
+    startEl.addEventListener('change', update);
+    endEl.addEventListener('change', update);
+    update();
+  }
 
+  function maxDate(a, b) { return a > b ? a : b; }
+
+  function update() {
+    var s = startEl.value, e = endEl.value;
+    if (!s || !e) { return; }
+    if (s > e) {
+      contentEl.innerHTML = '<p class="error">開始日が終了日より後になっています。日付を選び直してください。</p>';
+      noteEl.textContent = '';
+      return;
+    }
+    if (s < DATA.start) { s = startEl.value = DATA.start; }
+    if (e > DATA.end) { e = endEl.value = DATA.end; }
+
+    var n = dayCount(s, e);
+    noteEl.textContent = '選択中: ' + s + ' 〜 ' + e + '（' + n + '日間） / 保持期間 ' + DATA.start + ' 〜 ' + DATA.end;
+
+    Array.prototype.forEach.call(presetsEl.children, function (b) {
+      var days = +b.dataset.days;
+      var pStart = maxDate(DATA.start, addDays(DATA.end, -(days - 1)));
+      b.classList.toggle('active', e === DATA.end && s === pStart);
+    });
+
+    render(aggregate(s, e), s, e);
+  }
+
+  /* ---------- 選択期間で日別データを合算する ---------- */
+  function aggregate(startStr, endStr) {
+    var from = ymd(startStr), to = ymd(endStr);
+    var tot = { pv: 0, u: 0, au: 0, s: 0, ed: 0, es: 0 };
+    var hourly = new Array(24).fill(0);
+    var sources = {};
+    var daily = [];
+
+    var cur = startStr;
+    while (cur <= endStr) {
+      var rec = DATA.days[ymd(cur)];
+      daily.push({ d: mmdd(cur), pv: rec ? (rec.pv || 0) : 0 });
+      cur = addDays(cur, 1);
+    }
+
+    Object.keys(DATA.days).forEach(function (key) {
+      if (key < from || key > to) { return; }
+      var v = DATA.days[key];
+      tot.pv += v.pv || 0; tot.u += v.u || 0; tot.au += v.au || 0;
+      tot.s += v.s || 0; tot.ed += v.ed || 0; tot.es += v.es || 0;
+      if (v.h) {
+        Object.keys(v.h).forEach(function (h) { hourly[+h] += v.h[h]; });
+      }
+      if (v.src) {
+        Object.keys(v.src).forEach(function (n) {
+          sources[n] = (sources[n] || 0) + v.src[n];
+        });
+      }
+    });
+
+    return { tot: tot, hourly: hourly, sources: sources, daily: daily };
+  }
+
+  /* ---------- 描画 ---------- */
+  function render(agg, s, e) {
+    var t = agg.tot;
+    var avgDur = t.au ? Math.round(t.ed / t.au) : 0;
+    var engRate = t.s ? (t.es / t.s) : 0;
+
+    var rows = [
+      ['ページビュー', t.pv, '回'],
+      ['ユーザー数（のべ）', t.u, '人'],
+      ['セッション数', t.s, '回'],
+      ['平均エンゲージメント時間', formatDuration(avgDur), ''],
+      ['エンゲージメント率', (engRate * 100).toFixed(1), '%']
+    ];
+
+    var html = '<div class="metrics">';
+    rows.forEach(function (r) {
+      html += '<div class="metric"><span class="metric-label">' + r[0] + '</span>'
+        + '<span class="metric-value">' + r[1] + '<span class="unit">' + r[2] + '</span></span></div>';
+    });
+    html += '</div>';
+
+    if (t.pv === 0) {
+      html += '<div class="section"><p class="empty">この期間のアクセスはありませんでした。期間を広げてみてください。</p></div>';
+      contentEl.innerHTML = html;
+      updatedEl.textContent = '更新日: ' + DATA.updated;
+      return;
+    }
+
+    html += renderDaily(agg.daily);
+    html += renderHourly(agg.hourly);
+    html += renderSources(agg.sources);
     contentEl.innerHTML = html;
-
-    updatedEl.textContent = '更新日: ' + data.updated;
+    updatedEl.textContent = '更新日: ' + DATA.updated;
   }
 
   function esc(s) {
     return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
-
-  function maxOf(arr) {
-    let m = 0;
-    for (let i = 0; i < arr.length; i++) { if (arr[i] > m) m = arr[i]; }
-    return m;
+  function maxOf(a) { var m = 0; for (var i = 0; i < a.length; i++) { if (a[i] > m) m = a[i]; } return m; }
+  function section(title, inner) {
+    return '<div class="section"><h2 class="section-title">' + esc(title) + '</h2>' + inner + '</div>';
   }
 
   function renderDaily(daily) {
-    if (!daily || !daily.length) { return ''; }
-    const values = daily.map(function (d) { return d.pv; });
-    const max = maxOf(values);
-    if (max === 0) {
-      return section('日別のページビュー', '<p class="empty">期間中のアクセスはありませんでした。</p>');
-    }
-    let bars = '';
+    var max = maxOf(daily.map(function (d) { return d.pv; }));
+    if (!max) { return ''; }
+    var bars = '';
     daily.forEach(function (d) {
-      const h = max ? Math.max(2, Math.round(d.pv / max * 100)) : 2;
+      var h = Math.max(2, Math.round(d.pv / max * 100));
       bars += '<div class="vbar-wrap" title="' + esc(d.d) + '：' + d.pv + '回">'
-        + '<div class="vbar" style="height:' + h + '%"></div>'
-        + '</div>';
+        + '<div class="vbar" style="height:' + h + '%"></div></div>';
     });
-    const first = daily[0].d;
-    const last = daily[daily.length - 1].d;
     return section('日別のページビュー',
       '<div class="vchart">' + bars + '</div>'
-      + '<div class="axis"><span>' + esc(first) + '</span><span>最大 ' + max + '回</span><span>' + esc(last) + '</span></div>');
+      + '<div class="axis"><span>' + esc(daily[0].d) + '</span><span>最大 ' + max + '回</span><span>'
+      + esc(daily[daily.length - 1].d) + '</span></div>');
   }
 
   function renderHourly(hourly) {
-    if (!hourly || !hourly.length) { return ''; }
-    const max = maxOf(hourly);
-    if (max === 0) {
-      return section('時間帯別のページビュー', '<p class="empty">期間中のアクセスはありませんでした。</p>');
-    }
-    let bars = '';
-    for (let h = 0; h < hourly.length; h++) {
-      const ht = max ? Math.max(2, Math.round(hourly[h] / max * 100)) : 2;
+    var max = maxOf(hourly);
+    if (!max) { return ''; }
+    var bars = '';
+    for (var h = 0; h < 24; h++) {
+      var ht = Math.max(2, Math.round(hourly[h] / max * 100));
       bars += '<div class="vbar-wrap" title="' + h + '時台：' + hourly[h] + '回">'
-        + '<div class="vbar alt" style="height:' + ht + '%"></div>'
-        + '</div>';
+        + '<div class="vbar alt" style="height:' + ht + '%"></div></div>';
     }
     return section('時間帯別のページビュー',
       '<div class="vchart">' + bars + '</div>'
@@ -272,33 +330,26 @@
   }
 
   function renderSources(sources) {
-    if (!sources || !sources.length) {
-      return section('参照元（どこから来たか）', '<p class="empty">期間中のアクセスはありませんでした。</p>');
-    }
-    const total = sources.reduce(function (a, s) { return a + s.pv; }, 0);
-    let rowsHtml = '';
-    sources.forEach(function (s) {
-      const pct = total ? Math.round(s.pv / total * 100) : 0;
-      rowsHtml += '<div class="src-row">'
-        + '<div class="src-head"><span>' + esc(s.n) + '</span><span class="src-val">' + s.pv + '回 (' + pct + '%)</span></div>'
-        + '<div class="hbar-bg"><div class="hbar" style="width:' + Math.max(2, pct) + '%"></div></div>'
-        + '</div>';
+    var list = Object.keys(sources).map(function (n) { return { n: n, pv: sources[n] }; })
+      .sort(function (a, b) { return b.pv - a.pv; });
+    if (!list.length) { return ''; }
+    var top = list.slice(0, 6);
+    var rest = list.slice(6).reduce(function (a, x) { return a + x.pv; }, 0);
+    if (rest > 0) { top.push({ n: 'その他', pv: rest }); }
+    var total = list.reduce(function (a, x) { return a + x.pv; }, 0);
+    var html = '';
+    top.forEach(function (s) {
+      var pct = total ? Math.round(s.pv / total * 100) : 0;
+      html += '<div class="src-row"><div class="src-head"><span>' + esc(s.n) + '</span>'
+        + '<span class="src-val">' + s.pv + '回 (' + pct + '%)</span></div>'
+        + '<div class="hbar-bg"><div class="hbar" style="width:' + Math.max(2, pct) + '%"></div></div></div>';
     });
-    return section('参照元（どこから来たか）', rowsHtml);
+    return section('参照元（どこから来たか）', html);
   }
 
-  function section(title, inner) {
-    return '<div class="section"><h2 class="section-title">' + esc(title) + '</h2>' + inner + '</div>';
-  }
-
-  function formatDuration(totalSeconds) {
-    const s = Math.round(totalSeconds);
-    const m = Math.floor(s / 60);
-    const rem = s % 60;
-    if (m > 0) {
-      return m + '分' + rem + '秒';
-    }
-    return s + '秒';
+  function formatDuration(sec) {
+    var s = Math.round(sec), m = Math.floor(s / 60), r = s % 60;
+    return m > 0 ? (m + '分' + r + '秒') : (s + '秒');
   }
 })();
 </script>
