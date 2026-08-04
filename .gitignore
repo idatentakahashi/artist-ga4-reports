@@ -1,0 +1,17 @@
+# 安全装置：GCPサービスアカウント鍵など、機密ファイルを絶対に公開しないための除外設定。
+# このリポジトリは GitHub Pages で全世界に公開されるため、
+# 万一コピー操作を間違えても鍵が push されないようにしておく。
+midyear-circle-*.json
+*service-account*.json
+*credential*.json
+*secret*
+*.pem
+*.key
+
+# 作業用ファイル
+token_map.xlsx
+distribution_list.xlsx
+no_data_artists.xlsx
+artist.xlsx
+*.py
+*.log
