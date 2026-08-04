@@ -67,6 +67,67 @@
     color: #a39c8f;
     text-align: right;
   }
+  .section {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 1px solid #eee7dc;
+  }
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #6b4f2b;
+    margin: 0 0 14px;
+  }
+  .vchart {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 110px;
+  }
+  .vbar-wrap {
+    flex: 1 1 0;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    min-width: 0;
+  }
+  .vbar {
+    width: 100%;
+    background: #b08d57;
+    border-radius: 2px 2px 0 0;
+  }
+  .vbar.alt { background: #8fa889; }
+  .axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #a39c8f;
+    margin-top: 6px;
+  }
+  .src-row { margin-bottom: 12px; }
+  .src-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    color: #4a443c;
+    margin-bottom: 4px;
+    gap: 10px;
+  }
+  .src-head > span:first-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .src-val { color: #8a8378; font-size: 12px; flex: none; }
+  .hbar-bg {
+    background: #f0ebe2;
+    border-radius: 3px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .hbar { background: #b08d57; height: 100%; border-radius: 3px; }
+  .empty { font-size: 13px; color: #a39c8f; margin: 0; }
   .error {
     color: #a33;
     font-size: 14px;
@@ -150,9 +211,84 @@
         + '<span class="metric-value">' + value + '<span class="unit">' + unit + '</span></span>'
         + '</div>';
     });
+
+    html += renderDaily(data.daily);
+    html += renderHourly(data.hourly);
+    html += renderSources(data.sources);
+
     contentEl.innerHTML = html;
 
     updatedEl.textContent = '更新日: ' + data.updated;
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function maxOf(arr) {
+    let m = 0;
+    for (let i = 0; i < arr.length; i++) { if (arr[i] > m) m = arr[i]; }
+    return m;
+  }
+
+  function renderDaily(daily) {
+    if (!daily || !daily.length) { return ''; }
+    const values = daily.map(function (d) { return d.pv; });
+    const max = maxOf(values);
+    if (max === 0) {
+      return section('日別のページビュー', '<p class="empty">期間中のアクセスはありませんでした。</p>');
+    }
+    let bars = '';
+    daily.forEach(function (d) {
+      const h = max ? Math.max(2, Math.round(d.pv / max * 100)) : 2;
+      bars += '<div class="vbar-wrap" title="' + esc(d.d) + '：' + d.pv + '回">'
+        + '<div class="vbar" style="height:' + h + '%"></div>'
+        + '</div>';
+    });
+    const first = daily[0].d;
+    const last = daily[daily.length - 1].d;
+    return section('日別のページビュー',
+      '<div class="vchart">' + bars + '</div>'
+      + '<div class="axis"><span>' + esc(first) + '</span><span>最大 ' + max + '回</span><span>' + esc(last) + '</span></div>');
+  }
+
+  function renderHourly(hourly) {
+    if (!hourly || !hourly.length) { return ''; }
+    const max = maxOf(hourly);
+    if (max === 0) {
+      return section('時間帯別のページビュー', '<p class="empty">期間中のアクセスはありませんでした。</p>');
+    }
+    let bars = '';
+    for (let h = 0; h < hourly.length; h++) {
+      const ht = max ? Math.max(2, Math.round(hourly[h] / max * 100)) : 2;
+      bars += '<div class="vbar-wrap" title="' + h + '時台：' + hourly[h] + '回">'
+        + '<div class="vbar alt" style="height:' + ht + '%"></div>'
+        + '</div>';
+    }
+    return section('時間帯別のページビュー',
+      '<div class="vchart">' + bars + '</div>'
+      + '<div class="axis"><span>0時</span><span>12時</span><span>23時</span></div>');
+  }
+
+  function renderSources(sources) {
+    if (!sources || !sources.length) {
+      return section('参照元（どこから来たか）', '<p class="empty">期間中のアクセスはありませんでした。</p>');
+    }
+    const total = sources.reduce(function (a, s) { return a + s.pv; }, 0);
+    let rowsHtml = '';
+    sources.forEach(function (s) {
+      const pct = total ? Math.round(s.pv / total * 100) : 0;
+      rowsHtml += '<div class="src-row">'
+        + '<div class="src-head"><span>' + esc(s.n) + '</span><span class="src-val">' + s.pv + '回 (' + pct + '%)</span></div>'
+        + '<div class="hbar-bg"><div class="hbar" style="width:' + Math.max(2, pct) + '%"></div></div>'
+        + '</div>';
+    });
+    return section('参照元（どこから来たか）', rowsHtml);
+  }
+
+  function section(title, inner) {
+    return '<div class="section"><h2 class="section-title">' + esc(title) + '</h2>' + inner + '</div>';
   }
 
   function formatDuration(totalSeconds) {
